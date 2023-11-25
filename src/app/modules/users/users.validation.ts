@@ -1,33 +1,32 @@
-import Joi from 'joi';
+import { z } from 'zod';
 
-const NameSchema = Joi.object({
-  firstName: Joi.string().required(),
-  lastName: Joi.string().required(),
+const UserValidationSchema = z.object({
+  userId: z.number().positive('UserId must be a positive number'),
+  username: z.string().min(3, 'username must be 3 characters'),
+  password: z.string().min(6, 'password must be 6 characters'),
+  fullName: z.object({
+    firstName: z.string(),
+    lastName: z.string(),
+  }),
+  age: z.number().positive('Age must be a positive number'),
+  email: z.string().email('Invalid email address'),
+  isActive: z.boolean(),
+  hobbies: z.array(z.string()),
+  address: z.object({
+    street: z.string(),
+    city: z.string(),
+    country: z.string(),
+  }),
+  orders: z
+    .array(
+      z.object({
+        productName: z.string(),
+        price: z.number().positive('Price must be a positive number'),
+        quantity: z.number().positive('Quantity must be a positive number'),
+      }),
+    )
+    .optional(),
 });
 
-const AddressSchema = Joi.object({
-  street: Joi.string(),
-  city: Joi.string(),
-  country: Joi.string(),
-});
-
-const OrderSchema = Joi.object({
-  productName: Joi.string().required(),
-  price: Joi.number().required(),
-  quantity: Joi.number().required(),
-});
-
-const UserValidationSchema = Joi.object({
-  userId: Joi.number(),
-  username: Joi.string(),
-  password: Joi.string(),
-  fullName: NameSchema,
-  age: Joi.number(),
-  email: Joi.string().email(),
-  isActive: Joi.boolean(),
-  hobbies: Joi.array().items(Joi.string()).required(),
-  address: AddressSchema,
-  orders: Joi.array().items(OrderSchema),
-});
 
 export default UserValidationSchema;

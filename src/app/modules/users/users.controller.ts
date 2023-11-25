@@ -5,17 +5,9 @@ import UserValidationSchema from './users.validation';
 const createUser = async (req: Request, res: Response) => {
   try {
     const { users: userData } = req.body;
-
-    const { error, value } = UserValidationSchema.validate(userData);
-    const result = await userServices.createNewUserIntoDB(value);
-
-    if (error) {
-      res.status(500).json({
-        success: false,
-        message: 'User Not Created!',
-        error: error.details,
-      });
-    }
+    const zodData = UserValidationSchema.parse(userData);
+    
+    const result = await userServices.createNewUserIntoDB(zodData);
     res.status(200).json({
       success: true,
       message: 'User is create Successfully',
