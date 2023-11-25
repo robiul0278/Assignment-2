@@ -8,7 +8,7 @@ Step 1: Create a env file like this in root directory
 NODE_ENV= development
 PORT = 5000
 DATABASE_URL = your database url
-BCRYPT_SALT_ROUNDS = 10
+
 ```
 
 Step 2: Install all required dependencies
