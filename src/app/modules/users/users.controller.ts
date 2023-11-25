@@ -180,6 +180,53 @@ const getOrders = async (req: Request, res: Response) => {
   }
 };
 
+// get total order price 
+const getOrderTotalPrice = async (req: Request, res: Response) => {
+  try {
+    const user = await userServices.getSingleUserIntoDB(req.params.userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+        error: {
+          code: 404,
+          description: 'User not found!',
+        },
+      });
+    }
+
+    if (user.orders !== undefined && user.orders.length > 0) {
+      let totalPrice = 0;
+
+      user.orders.forEach((order) => {
+        totalPrice += order.price * order.quantity;
+      });
+
+      res.status(200).json({
+        success: true,
+        message: 'Total price calculated successfully!',
+        data: {
+          totalPrice,
+        },
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        message: 'User has no orders',
+        data: {
+          totalPrice: 0,
+        },
+      });
+    }
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message:'something went wrong',
+      err,
+    });
+  }
+};
 
 export const userControllers = {
   createUser,
