@@ -73,10 +73,10 @@ const getSingleUsers = async (req: Request, res: Response) => {
 const updateSingleUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const { updatedUserData } = req.body;
+    const zodData = UserValidationSchema.parse(req.body);
     const result = await userServices.updateSingleUserIntoDB(
       userId,
-      updatedUserData,
+      zodData,
     );
     res.status(200).json({
       success: true,
@@ -92,6 +92,7 @@ const updateSingleUser = async (req: Request, res: Response) => {
   }
 };
 
+// delete user 
 const deleteSingleUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
@@ -110,10 +111,83 @@ const deleteSingleUser = async (req: Request, res: Response) => {
   }
 };
 
+// Create order 
+const createOrder = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const user = await userServices.getSingleUserIntoDB(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+        error: {
+          code: 404,
+          description: 'User not found!',
+        },
+      });
+    }
+    const orderData = req.body;
+    await userServices.createOrderIntoDB(userId, orderData);
+
+    res.status(200).json({
+      success: true,
+      message: 'Order created successfully!',
+      data: null,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message:'something went wrong',
+      error,
+    });
+  }
+};
+
+
+// get order data 
+const getOrders = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const user = await userServices.getSingleUserIntoDB(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+        error: {
+          code: 404,
+          description: 'User not found!',
+        },
+      });
+    }
+
+    const { orders } = user.toObject();
+
+    res.status(200).json({
+      success: true,
+      message: 'Orders fetched successfully',
+      data: {
+        orders,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: 'something went wrong',
+      err,
+    });
+  }
+};
+
+
 export const userControllers = {
   createUser,
   getAllUsers,
   getSingleUsers,
   updateSingleUser,
   deleteSingleUser,
+  createOrder,
+  getOrders,
+  getOrderTotalPrice
 };
