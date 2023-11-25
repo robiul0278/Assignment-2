@@ -17,10 +17,15 @@ Step 2: Install all required dependencies
 npm install
 ```
 
-Step 3: Start your development server
+Step 3: Build your server
 
 ```
-npm run start:dev
+npm run build
+```
+Step 4: Start your development server
+
+```
+npm run dev
 ```
 
 Now your application is ready to run
