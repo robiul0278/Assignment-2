@@ -20,13 +20,13 @@ const getAllUsersIntoDB = async () => {
 };
 
 // Retrieve a specific user by ID
-const getSingleUserIntoDB = async (userId: string) => {
+const getSingleUserIntoDB = async (userId: number) => {
   const result = await userModel.findOne({ userId }).select('-password');
   return result;
 };
 
 // Update a specific user by ID
-const updateSingleUserIntoDB = async (userId: string, updatedUserData: User,) => {
+const updateSingleUserIntoDB = async (userId: number, updatedUserData: User,) => {
   const result = await userModel.findOneAndUpdate({ userId },
     {
       $set: updatedUserData,
@@ -36,13 +36,15 @@ const updateSingleUserIntoDB = async (userId: string, updatedUserData: User,) =>
   return result;
 };
 
+
+
 // Delete a specific user by ID
-const deleteUserIntoDB = async (userId: string) => {
+const deleteUserIntoDB = async (userId: number) => {
   const result = await userModel.deleteOne({ userId });
   return result;
 };
 
-const createOrderIntoDB = async (userId: string, orderData: Orders) => {
+const createOrderIntoDB = async (userId: number, orderData: Orders) => {
   const result = await userModel.findOneAndUpdate(
     { userId },
     { $push: { orders: orderData } },

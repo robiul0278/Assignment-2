@@ -44,8 +44,8 @@ const getAllUsers = async (req: Request, res: Response) => {
 // get single user 
 const getSingleUsers = async (req: Request, res: Response) => {
   try {
-    const { studentId } = req.params;
-    const result = await userServices.getSingleUserIntoDB(studentId);
+    const  userId : any = req.params.userId;
+    const result = await userServices.getSingleUserIntoDB(userId);
 
     if (!result) {
       return res.status(404).json({
@@ -72,7 +72,7 @@ const getSingleUsers = async (req: Request, res: Response) => {
 // update ingle user
 const updateSingleUser = async (req: Request, res: Response) => {
   try {
-    const { userId } = req.params;
+    const  userId : any = req.params.userId;
     const zodData = UserValidationSchema.parse(req.body);
     const result = await userServices.updateSingleUserIntoDB(
       userId,
@@ -95,7 +95,7 @@ const updateSingleUser = async (req: Request, res: Response) => {
 // delete user 
 const deleteSingleUser = async (req: Request, res: Response) => {
   try {
-    const { userId } = req.params;
+    const  userId : any = req.params.userId;
     const result = await userServices.deleteUserIntoDB(userId);
     res.status(200).json({
       success: true,
@@ -114,7 +114,7 @@ const deleteSingleUser = async (req: Request, res: Response) => {
 // Create order 
 const createOrder = async (req: Request, res: Response) => {
   try {
-    const { userId } = req.params;
+    const  userId : any = req.params.userId;
     const user = await userServices.getSingleUserIntoDB(userId);
 
     if (!user) {
@@ -148,7 +148,7 @@ const createOrder = async (req: Request, res: Response) => {
 // get order data 
 const getOrders = async (req: Request, res: Response) => {
   try {
-    const { userId } = req.params;
+    const  userId : any = req.params.userId;
     const user = await userServices.getSingleUserIntoDB(userId);
 
     if (!user) {
@@ -183,7 +183,8 @@ const getOrders = async (req: Request, res: Response) => {
 // get total order price 
 const getOrderTotalPrice = async (req: Request, res: Response) => {
   try {
-    const user = await userServices.getSingleUserIntoDB(req.params.userId);
+    const  userId : any = req.params.userId;
+    const user = await userServices.getSingleUserIntoDB(userId);
 
     if (!user) {
       return res.status(404).json({
