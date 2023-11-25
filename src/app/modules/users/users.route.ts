@@ -21,6 +21,7 @@ router
   .put(userControllers.createOrder)
   .get(userControllers.getOrders);
 
-
+// Calculate price
+router.get('/:userId/orders/total-price', userControllers.getOrderTotalPrice);
 
 export const userRoutes = router;
