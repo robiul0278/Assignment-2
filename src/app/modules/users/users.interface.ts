@@ -31,5 +31,5 @@ export type User = {
   "isActive": boolean;
   "hobbies": Hobbies;
   "address": Address;
-  "orders": Orders;
+  "orders"?: Orders;
 }

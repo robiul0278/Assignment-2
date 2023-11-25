@@ -1,17 +1,32 @@
 import { Request, Response } from 'express';
 import { userServices } from './users.service';
+import UserValidationSchema from './users.validation';
 
 const createUser = async (req: Request, res: Response) => {
   try {
-    const  {users: userData}  = req.body;
-    const result = await userServices.createNewUserIntoDB(userData);
+    const { users: userData } = req.body;
+
+    const { error, value } = UserValidationSchema.validate(userData);
+    const result = await userServices.createNewUserIntoDB(value);
+
+    if (error) {
+      res.status(500).json({
+        success: false,
+        message: 'User Not Created!',
+        error: error.details,
+      });
+    }
     res.status(200).json({
       success: true,
       message: 'User is create Successfully',
       data: result,
     });
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'User Not Created!',
+      error: error,
+    });
   }
 };
 
@@ -42,12 +57,14 @@ const getSingleUsers = async (req: Request, res: Response) => {
   }
 };
 
-
 const updateSingleUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { updatedUserData } = req.body;
-    const result = await userServices.updateSingleUserIntoDB(userId, updatedUserData);
+    const result = await userServices.updateSingleUserIntoDB(
+      userId,
+      updatedUserData,
+    );
     res.status(200).json({
       success: true,
       message: 'User updated successfully',
@@ -62,14 +79,13 @@ const updateSingleUser = async (req: Request, res: Response) => {
   }
 };
 
-
 const deleteSingleUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const result = await userServices.deleteSingleUserFromDB(userId);
     res.status(200).json({
       success: true,
-      message: 'User deleted successfully',
+      message: 'User deleted successfully!',
       data: result,
     });
   } catch (err) {
@@ -81,11 +97,10 @@ const deleteSingleUser = async (req: Request, res: Response) => {
   }
 };
 
-
 export const userControllers = {
   createUser,
   getAllUsers,
   getSingleUsers,
   updateSingleUser,
-  deleteSingleUser
+  deleteSingleUser,
 };

@@ -42,5 +42,5 @@ export const userServices = {
   getAllUsersIntoDB,
   getSingleUserIntoDB,
   updateSingleUserIntoDB,
-  deleteSingleUserFromDB
+  deleteSingleUserFromDB,
 };
