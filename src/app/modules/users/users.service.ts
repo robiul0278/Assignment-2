@@ -1,6 +1,5 @@
 import { userModel } from '../users.model';
-import { User } from './users.interface';
-
+import { Orders, User } from './users.interface';
 
 // Create a new user
 const createNewUserIntoDB = async (userData: User) => {
@@ -8,39 +7,55 @@ const createNewUserIntoDB = async (userData: User) => {
   return result;
 };
 
-
 // Retrieve a list of all users
 const getAllUsersIntoDB = async () => {
-  const result = await userModel.find();
-  return result;
+  const users = await userModel.aggregate([]).project({
+    username: 1,
+    fullName: 1,
+    age: 1,
+    email: 1,
+    address: 1,
+  });
+  return users;
 };
-
 
 // Retrieve a specific user by ID
-const getSingleUserIntoDB = async (id: string) => {
-  const result = await userModel.findOne({ id });
+const getSingleUserIntoDB = async (userId: string) => {
+  const result = await userModel.findOne({ userId }).select('-password');
   return result;
 };
-
 
 // Update a specific user by ID
-const updateSingleUserIntoDB = async (id: string, updatedUserData: User) => {
-  const result = await userModel.findOneAndUpdate({ id }, updatedUserData, { new: true });
+const updateSingleUserIntoDB = async (userId: string, updatedUserData: User,) => {
+  const result = await userModel.findOneAndUpdate({ userId },
+    {
+      $set: updatedUserData,
+    },
+    { new: true},
+  ).select({password: 0});
   return result;
 };
-
 
 // Delete a specific user by ID
-const deleteSingleUserFromDB = async (id: string) => {
-  const result = await userModel.findOneAndDelete({ id });
+const deleteUserIntoDB = async (userId: string) => {
+  const result = await userModel.deleteOne({ userId });
   return result;
 };
 
+const createOrderIntoDB = async (userId: string, orderData: Orders) => {
+  const result = await userModel.findOneAndUpdate(
+    { userId },
+    { $push: { orders: orderData } },
+    { upsert: true, new: true },
+  );
+  return result;
+};
 
 export const userServices = {
   createNewUserIntoDB,
   getAllUsersIntoDB,
   getSingleUserIntoDB,
   updateSingleUserIntoDB,
-  deleteSingleUserFromDB,
+  deleteUserIntoDB,
+  createOrderIntoDB
 };

@@ -2,13 +2,16 @@ import { Request, Response } from 'express';
 import { userServices } from './users.service';
 import UserValidationSchema from './users.validation';
 
+
+
+// Create User 
 const createUser = async (req: Request, res: Response) => {
   try {
     const { users: userData } = req.body;
     const zodData = UserValidationSchema.parse(userData);
-    
+
     const result = await userServices.createNewUserIntoDB(zodData);
-    res.status(200).json({
+    res.status(201).json({
       success: true,
       message: 'User is create Successfully',
       data: result,
@@ -22,6 +25,8 @@ const createUser = async (req: Request, res: Response) => {
   }
 };
 
+
+// get all user 
 const getAllUsers = async (req: Request, res: Response) => {
   try {
     const result = await userServices.getAllUsersIntoDB();
@@ -35,10 +40,24 @@ const getAllUsers = async (req: Request, res: Response) => {
   }
 };
 
+
+// get single user 
 const getSingleUsers = async (req: Request, res: Response) => {
   try {
     const { studentId } = req.params;
     const result = await userServices.getSingleUserIntoDB(studentId);
+
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+        error: {
+          code: 404,
+          description: 'User not found!',
+        },
+      });
+    }
+
     res.status(200).json({
       success: true,
       message: 'Single student get Successfully',
@@ -49,6 +68,8 @@ const getSingleUsers = async (req: Request, res: Response) => {
   }
 };
 
+
+// update ingle user
 const updateSingleUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
@@ -74,7 +95,7 @@ const updateSingleUser = async (req: Request, res: Response) => {
 const deleteSingleUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const result = await userServices.deleteSingleUserFromDB(userId);
+    const result = await userServices.deleteUserIntoDB(userId);
     res.status(200).json({
       success: true,
       message: 'User deleted successfully!',
