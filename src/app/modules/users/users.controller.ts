@@ -69,21 +69,23 @@ const getSingleUsers = async (req: Request, res: Response) => {
 };
 
 
-// update ingle user
+
+
 const updateSingleUser = async (req: Request, res: Response) => {
   try {
-    const  userId : any = req.params.userId;
-    const zodData = UserValidationSchema.parse(req.body);
+    const userId: any = req.params.userId;
+    const updatedUserData = req.body;
     const result = await userServices.updateSingleUserIntoDB(
       userId,
-      zodData,
-    );
+      updatedUserData,
+    )    
     res.status(200).json({
       success: true,
       message: 'User updated successfully',
       data: result,
     });
-  } catch (err) {
+  }
+catch (err) {
     console.log(err);
     res.status(500).json({
       success: false,
@@ -183,7 +185,7 @@ const getOrders = async (req: Request, res: Response) => {
 // get total order price 
 const getOrderTotalPrice = async (req: Request, res: Response) => {
   try {
-    const  userId : any = req.params.userId;
+    const userId: any = req.params.userId;
     const user = await userServices.getSingleUserIntoDB(userId);
 
     if (!user) {
@@ -201,7 +203,10 @@ const getOrderTotalPrice = async (req: Request, res: Response) => {
       let totalPrice = 0;
 
       user.orders.forEach((order) => {
-        totalPrice += order.price * order.quantity;
+        // Check if order has price and quantity properties
+        if (order.price !== undefined && order.quantity !== undefined) {
+          totalPrice += order.price * order.quantity;
+        }
       });
 
       res.status(200).json({
@@ -223,11 +228,12 @@ const getOrderTotalPrice = async (req: Request, res: Response) => {
   } catch (err) {
     res.status(500).json({
       success: false,
-      message:'something went wrong',
+      message: 'Something went wrong',
       err,
     });
   }
 };
+
 
 export const userControllers = {
   createUser,

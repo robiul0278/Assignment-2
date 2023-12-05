@@ -25,17 +25,17 @@ const getSingleUserIntoDB = async (userId: number) => {
   return result;
 };
 
-// Update a specific user by ID
-const updateSingleUserIntoDB = async (userId: number, updatedUserData: User,) => {
-  const result = await userModel.findOneAndUpdate({ userId },
+// // Update a specific user by ID
+const updateSingleUserIntoDB = async (id: string, updatedUserData: User) => {
+  const result = await userModel.findOneAndUpdate(
+    { userId: id },
+   { $set : updatedUserData},
     {
-      $set: updatedUserData,
+      new: true,
     },
-    { new: true},
   ).select({password: 0});
   return result;
 };
-
 
 
 // Delete a specific user by ID
