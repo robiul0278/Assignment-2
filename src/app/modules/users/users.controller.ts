@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Request, Response } from 'express';
 import { userServices } from './users.service';
 import UserValidationSchema from './users.validation';
@@ -7,14 +8,16 @@ import UserValidationSchema from './users.validation';
 // Create User 
 const createUser = async (req: Request, res: Response) => {
   try {
-    const { users: userData } = req.body;
+    const userData = req.body;
     const zodData = UserValidationSchema.parse(userData);
 
     const result = await userServices.createNewUserIntoDB(zodData);
+    // eslint-disable-next-line no-unused-vars
+    const { password , ...other} = result.toObject()
     res.status(201).json({
       success: true,
       message: 'User is create Successfully',
-      data: result,
+      data: other,
     });
   } catch (error) {
     res.status(500).json({
@@ -98,11 +101,11 @@ catch (err) {
 const deleteSingleUser = async (req: Request, res: Response) => {
   try {
     const  userId : any = req.params.userId;
-    const result = await userServices.deleteUserIntoDB(userId);
+     await userServices.deleteUserIntoDB(userId);
     res.status(200).json({
       success: true,
       message: 'User deleted successfully!',
-      data: result,
+      data: null,
     });
   } catch (err) {
     console.log(err);
